@@ -1,0 +1,41 @@
+#!/bin/env python
+"""
+Think aboout concatenation later.
+Implement visualization first.
+"""
+import sys
+import msgpack
+
+def print_object(o, i=0):
+	max_length = 30
+
+	if type(o) is list or type(o) is tuple:
+		print(' '*i+'array[%d]'%len(o))
+		for co in o:
+			print_object(co, i+1)
+	elif type(o) is str:
+		try:
+			s = unicode(o)
+			if len(s)>max_length:
+				print(' '*i+s[:max_length]+'... (total %d characters)'%len(s))
+			else:
+				print(' '*i+s[:max_length])
+		except UnicodeDecodeError:
+			s = o.encode('hex')
+			if len(s)>max_length:
+				print(' '*i+s[:max_length]+'... (total %d bytes)'%len(o))
+			else:
+				print(' '*i+s[:max_length])
+	else:
+		print(' '*i+'%s'%o)
+
+if sys.stdout.isatty():
+	if len(sys.argv)==1:
+		print(msgpack.unpackb(sys.stdin))
+	else:
+		assert(len(sys.argv)==2)
+		o = msgpack.unpack(open(sys.argv[1],'rb'))
+		print_object(o)
+				
+else:
+	pass
